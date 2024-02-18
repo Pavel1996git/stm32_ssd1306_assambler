@@ -1,0 +1,1378 @@
+
+stm32F103C8T6_Registr_I2C_SSD1306.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .isr_vector   0000010c  08000000  08000000  00010000  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  1 .text         000005dc  0800010c  0800010c  0001010c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .rodata       00000000  080006e8  080006e8  00020038  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  3 .ARM.extab    00000000  080006e8  080006e8  00020038  2**0
+                  CONTENTS
+  4 .ARM          00000000  080006e8  080006e8  00020038  2**0
+                  CONTENTS
+  5 .preinit_array 00000000  080006e8  080006e8  00020038  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  6 .init_array   00000004  080006e8  080006e8  000106e8  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  7 .fini_array   00000004  080006ec  080006ec  000106ec  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  8 .data         00000038  20000000  080006f0  00020000  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  9 .bss          00000060  20000038  08000728  00020038  2**2
+                  ALLOC
+ 10 ._user_heap_stack 00000600  20000098  08000728  00020098  2**0
+                  ALLOC
+ 11 .ARM.attributes 00000029  00000000  00000000  00020038  2**0
+                  CONTENTS, READONLY
+ 12 .debug_line   00001ef0  00000000  00000000  00020061  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 13 .debug_info   00000e58  00000000  00000000  00021f51  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 14 .debug_abbrev 000004d9  00000000  00000000  00022da9  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 15 .debug_aranges 00000230  00000000  00000000  00023288  2**3
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 16 .debug_str    0007b238  00000000  00000000  000234b8  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 17 .debug_ranges 00000168  00000000  00000000  0009e6f0  2**3
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 18 .debug_macro  00015258  00000000  00000000  0009e858  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 19 .comment      00000050  00000000  00000000  000b3ab0  2**0
+                  CONTENTS, READONLY
+ 20 .debug_frame  000004e8  00000000  00000000  000b3b00  2**2
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+
+Disassembly of section .text:
+
+0800010c <__do_global_dtors_aux>:
+ 800010c:	b510      	push	{r4, lr}
+ 800010e:	4c05      	ldr	r4, [pc, #20]	; (8000124 <__do_global_dtors_aux+0x18>)
+ 8000110:	7823      	ldrb	r3, [r4, #0]
+ 8000112:	b933      	cbnz	r3, 8000122 <__do_global_dtors_aux+0x16>
+ 8000114:	4b04      	ldr	r3, [pc, #16]	; (8000128 <__do_global_dtors_aux+0x1c>)
+ 8000116:	b113      	cbz	r3, 800011e <__do_global_dtors_aux+0x12>
+ 8000118:	4804      	ldr	r0, [pc, #16]	; (800012c <__do_global_dtors_aux+0x20>)
+ 800011a:	f3af 8000 	nop.w
+ 800011e:	2301      	movs	r3, #1
+ 8000120:	7023      	strb	r3, [r4, #0]
+ 8000122:	bd10      	pop	{r4, pc}
+ 8000124:	20000038 	.word	0x20000038
+ 8000128:	00000000 	.word	0x00000000
+ 800012c:	080006d0 	.word	0x080006d0
+
+08000130 <frame_dummy>:
+ 8000130:	b508      	push	{r3, lr}
+ 8000132:	4b03      	ldr	r3, [pc, #12]	; (8000140 <frame_dummy+0x10>)
+ 8000134:	b11b      	cbz	r3, 800013e <frame_dummy+0xe>
+ 8000136:	4903      	ldr	r1, [pc, #12]	; (8000144 <frame_dummy+0x14>)
+ 8000138:	4803      	ldr	r0, [pc, #12]	; (8000148 <frame_dummy+0x18>)
+ 800013a:	f3af 8000 	nop.w
+ 800013e:	bd08      	pop	{r3, pc}
+ 8000140:	00000000 	.word	0x00000000
+ 8000144:	2000003c 	.word	0x2000003c
+ 8000148:	080006d0 	.word	0x080006d0
+
+0800014c <asmSetRegistr>:
+.equ RCC_CFGR_SWS, 0x00        // Mask for the current system clock source bits
+.equ RCC_CFGR_SWS_MASK, 0x0C   // Mask for the status bits of the system clock selection
+
+asmSetRegistr:
+
+    LDR R3, [R1]            // Load the current value of the register into R3
+ 800014c:	680b      	ldr	r3, [r1, #0]
+    ORR R3, R3, R2          // Set the GPIOAEN_BIT
+ 800014e:	4313      	orrs	r3, r2
+    STR R3, [R1]            // Write the new value back to the register
+ 8000150:	600b      	str	r3, [r1, #0]
+    // Restore the LR register from the stack and return
+    BX LR
+ 8000152:	4770      	bx	lr
+
+08000154 <asmResetRegistr>:
+
+asmResetRegistr:
+
+    LDR R3, [R1]            // Load the current value of the register into R3
+ 8000154:	680b      	ldr	r3, [r1, #0]
+    // Invert the mask R2
+    // MVN R2, R2
+    // Apply the BIC operation to reset the bits
+    BIC R3, R3, R2
+ 8000156:	4393      	bics	r3, r2
+    // Save the updated value back to GPIOB->CRL
+    STR R3, [R1]
+ 8000158:	600b      	str	r3, [r1, #0]
+    // Restore the LR register from the stack and return
+    BX LR
+ 800015a:	4770      	bx	lr
+
+0800015c <asmWhileBeq>:
+    // LDR R3, [R1]  // Load the value of register R1 into register R3
+    // CMP R3, R2           // Compare with R2
+    // BEQ asmWhileBeq              // Jump to the asmWhileBeq label if the equality condition is met
+    // BX LR // restore the LR register from the stack and return
+
+    LDR R3, [R1]            // Load the value of register R1 into register R3
+ 800015c:	680b      	ldr	r3, [r1, #0]
+    AND R3, R3, R2          // Check bit 1
+ 800015e:	4013      	ands	r3, r2
+    BEQ asmWhileBeq         // Jump to the loop label if bit 1 is not set
+ 8000160:	d0fc      	beq.n	800015c <asmWhileBeq>
+    BX LR                   // Restore the LR register from the stack and return
+ 8000162:	4770      	bx	lr
+
+08000164 <asmClockEnable>:
+
+asmClockEnable:
+    // Load the address of the clock control register (RCC_CR)
+    LDR R0, =RCC_CR
+ 8000164:	480a      	ldr	r0, [pc, #40]	; (8000190 <wait_SW+0x12>)
+    // Load the mask value for enabling the HSI generator (RCC_CR_HSION)
+    LDR R1, =RCC_CR_HSION
+ 8000166:	f04f 0101 	mov.w	r1, #1
+    // Save the value from R1 to the address in R0 (enable HSI)
+    STR R1, [R0]
+ 800016a:	6001      	str	r1, [r0, #0]
+
+0800016c <wait_HSI>:
+
+wait_HSI:
+    // Load the value for the HSI ready bit mask (RCC_CR_HSIRDY)
+    LDR R1, =RCC_CR_HSIRDY
+ 800016c:	f04f 0102 	mov.w	r1, #2
+    // Load the value at the address in R0 (RCC_CR)
+    LDR R2, [R0]
+ 8000170:	6802      	ldr	r2, [r0, #0]
+    // Check the HSI ready bit in R2
+    TST R1, R2
+ 8000172:	4211      	tst	r1, r2
+    // Jump to wait_HSI if HSI is not ready
+    BEQ wait_HSI
+ 8000174:	d0fa      	beq.n	800016c <wait_HSI>
+
+    // Load the address of the clock configuration register (RCC_CFGR)
+    LDR R0, =RCC_CFGR
+ 8000176:	4807      	ldr	r0, [pc, #28]	; (8000194 <wait_SW+0x16>)
+    // Load the mask value for the system clock source selection bits (RCC_CFGR_SW)
+    LDR R1, =RCC_CFGR_SW
+ 8000178:	f04f 0100 	mov.w	r1, #0
+    // Save the value from R1 to the address in R0 (select HSI as the system clock source)
+    STR R1, [R0]
+ 800017c:	6001      	str	r1, [r0, #0]
+
+0800017e <wait_SW>:
+
+wait_SW:
+    // Load the value at the address in R0 (RCC_CFGR)
+    LDR R2, [R0]
+ 800017e:	6802      	ldr	r2, [r0, #0]
+    // Load the mask value for the system clock selection status bits (RCC_CFGR_SWS_MASK)
+    LDR R1, =RCC_CFGR_SWS_MASK
+ 8000180:	f04f 010c 	mov.w	r1, #12
+    // Apply bitwise AND to mask other bits and keep only the SWS bits
+    AND R2, R2, R1
+ 8000184:	400a      	ands	r2, r1
+    // Load the mask value for the current system clock source bits (RCC_CFGR_SWS)
+    LDR R1, =RCC_CFGR_SWS
+ 8000186:	f04f 0100 	mov.w	r1, #0
+    // Compare the SWS bits with the required value
+    CMP R2, R1
+ 800018a:	428a      	cmp	r2, r1
+    // Jump to wait_SW if the system clock switch is not ready
+    BNE wait_SW
+ 800018c:	d1f7      	bne.n	800017e <wait_SW>
+
+    BX LR
+ 800018e:	4770      	bx	lr
+    LDR R0, =RCC_CR
+ 8000190:	40021000 	.word	0x40021000
+    LDR R0, =RCC_CFGR
+ 8000194:	40021004 	.word	0x40021004
+
+08000198 <asmI2cEnable>:
+.equ SSD_MODE, 0x0                   // SSD1306 device mode
+.equ SSD_CONTRL_BYTE_COMMAND, 0x0    // Control byte for command transmission to SSD1306
+.equ SSD_CONTRL_BYTE_DATA, 0x40      // Control byte for data transmission to SSD1306
+
+asmI2cEnable:
+    MOV R5, LR                       // Save the value of LR in register R5
+ 8000198:	4675      	mov	r5, lr
+    ldr r1, =RCC_APB1ENR              // Load the address of RCC_APB1ENR into register r1
+ 800019a:	4968      	ldr	r1, [pc, #416]	; (800033c <asmSsdSendCommand+0x1e>)
+    ldr r2, =RCC_APB1ENR_I2C1EN       // Load the value RCC_APB1ENR_I2C1EN into register r2
+ 800019c:	f44f 1200 	mov.w	r2, #2097152	; 0x200000
+    BL asmSetRegistr                 // Call the asmSetRegistr function
+ 80001a0:	f7ff ffd4 	bl	800014c <asmSetRegistr>
+
+    ldr r1, =RCC_APB2ENR              // Load the address of RCC_APB2ENR into register r1
+ 80001a4:	4966      	ldr	r1, [pc, #408]	; (8000340 <asmSsdSendCommand+0x22>)
+    ldr r2, =RCC_APB2ENR_IOPBEN        // Load the value RCC_APB2ENR_IOPBEN into register r2
+ 80001a6:	f04f 0208 	mov.w	r2, #8
+    BL asmSetRegistr                 // Call the asmSetRegistr function
+ 80001aa:	f7ff ffcf 	bl	800014c <asmSetRegistr>
+
+
+    ldr r1, =GPIOB_CRL                // Load the address of GPIOB_CRL into register r1
+ 80001ae:	4965      	ldr	r1, [pc, #404]	; (8000344 <asmSsdSendCommand+0x26>)
+    ldr r2, =GPIOB_CRL_MODE           // Load the value of GPIOB_CRL_MODE into register r2
+ 80001b0:	f04f 424c 	mov.w	r2, #3422552064	; 0xcc000000
+    BL asmSetRegistr                 // Call the asmSetRegistr function
+ 80001b4:	f7ff ffca 	bl	800014c <asmSetRegistr>
+
+    ldr r1, =GPIOB_CRL                // Load the address of GPIOB_CRL into register r1
+ 80001b8:	4962      	ldr	r1, [pc, #392]	; (8000344 <asmSsdSendCommand+0x26>)
+    ldr r2, =GPIOB_CRL_CNF            // Load the value of GPIOB_CRL_CNF into register r2
+ 80001ba:	f04f 524c 	mov.w	r2, #855638016	; 0x33000000
+    BL asmSetRegistr                 // Call the asmSetRegistr function
+ 80001be:	f7ff ffc5 	bl	800014c <asmSetRegistr>
+
+    ldr r1, =GPIOB_ODR                // Load the address of GPIOB_ODR into register r1
+ 80001c2:	4961      	ldr	r1, [pc, #388]	; (8000348 <asmSsdSendCommand+0x2a>)
+    ldr r2, =GPIOB_ODR_ODR            // Load the value of GPIOB_ODR_ODR into register r2
+ 80001c4:	f04f 02c0 	mov.w	r2, #192	; 0xc0
+    BL asmSetRegistr                 // Call the asmSetRegistr function
+ 80001c8:	f7ff ffc0 	bl	800014c <asmSetRegistr>
+
+    ldr r1, =I2C1_CR1                 // Load the address of I2C1_CR1 into register r1
+ 80001cc:	495f      	ldr	r1, [pc, #380]	; (800034c <asmSsdSendCommand+0x2e>)
+    ldr r2, =I2C1_CR1_SWRST           // Load the value of I2C1_CR1_SWRST into register r2
+ 80001ce:	f44f 4200 	mov.w	r2, #32768	; 0x8000
+    BL asmSetRegistr                 // Call the asmSetRegistr function
+ 80001d2:	f7ff ffbb 	bl	800014c <asmSetRegistr>
+
+    ldr r1, =I2C1_CR1                 // Load the address of I2C1_CR1 into register r1
+ 80001d6:	495d      	ldr	r1, [pc, #372]	; (800034c <asmSsdSendCommand+0x2e>)
+    ldr r2, =I2C1_CR1_SWRST           // Load the value of I2C1_CR1_SWRST into register r2
+ 80001d8:	f44f 4200 	mov.w	r2, #32768	; 0x8000
+    BL asmResetRegistr               // Call the asmResetRegistr function
+ 80001dc:	f7ff ffba 	bl	8000154 <asmResetRegistr>
+
+    ldr r1, =I2C1_CR2                 // Load the address of I2C1_CR2 into register r1
+ 80001e0:	495b      	ldr	r1, [pc, #364]	; (8000350 <asmSsdSendCommand+0x32>)
+    ldr r2, =I2C1_CR2_FREQ            // Load the value of I2C1_CR2_FREQ into register r2
+ 80001e2:	f04f 0204 	mov.w	r2, #4
+    BL asmSetRegistr                 // Call the asmSetRegistr function
+ 80001e6:	f7ff ffb1 	bl	800014c <asmSetRegistr>
+
+    ldr r1, =I2C1_CCR                 // Load the address of I2C1_CCR into register r1
+ 80001ea:	495a      	ldr	r1, [pc, #360]	; (8000354 <asmSsdSendCommand+0x36>)
+    ldr r2, =I2C1_CCR_CCR             // Load the value of I2C1_CCR_CCR into register r2
+ 80001ec:	f04f 0228 	mov.w	r2, #40	; 0x28
+    BL asmSetRegistr                 // Call the asmSetRegistr function
+ 80001f0:	f7ff ffac 	bl	800014c <asmSetRegistr>
+
+    ldr r1, =I2C1_TRISE               // Load the address of I2C1_TRISE into register r1
+ 80001f4:	4958      	ldr	r1, [pc, #352]	; (8000358 <asmSsdSendCommand+0x3a>)
+    ldr r2, =I2C1_TRISE_TRISE         // Load the value of I2C1_TRISE_TRISE into register r2
+ 80001f6:	f04f 0209 	mov.w	r2, #9
+    BL asmSetRegistr                 // Call the asmSetRegistr function
+ 80001fa:	f7ff ffa7 	bl	800014c <asmSetRegistr>
+
+    ldr r1, =I2C1_CR1                 // Load the address of I2C1_CR1 into register r1
+ 80001fe:	4953      	ldr	r1, [pc, #332]	; (800034c <asmSsdSendCommand+0x2e>)
+    ldr r2, =I2C1_CR1_PE              // Load the value of I2C1_CR1_PE into register r2
+ 8000200:	f04f 0201 	mov.w	r2, #1
+    BL asmSetRegistr                 // Call the asmSetRegistr function
+ 8000204:	f7ff ffa2 	bl	800014c <asmSetRegistr>
+
+    ldr r1, =I2C1_CR1                 // Load the address of I2C1_CR1 into register r1
+ 8000208:	4950      	ldr	r1, [pc, #320]	; (800034c <asmSsdSendCommand+0x2e>)
+    ldr r2, =I2C1_CR1_ACK             // Load the value of I2C1_CR1_ACK into register r2
+ 800020a:	f44f 6280 	mov.w	r2, #1024	; 0x400
+    BL asmSetRegistr                 // Call the asmSetRegistr function
+ 800020e:	f7ff ff9d 	bl	800014c <asmSetRegistr>
+
+08000212 <asmSsdEnable>:
+
+asmSsdEnable:
+    ldr r1, =I2C1_CR1                 // Load the address of I2C1_CR1 into register r1
+ 8000212:	494e      	ldr	r1, [pc, #312]	; (800034c <asmSsdSendCommand+0x2e>)
+    ldr r2, =I2C1_CR1_START           // Load the value of I2C1_CR1_START into register r2
+ 8000214:	f44f 7280 	mov.w	r2, #256	; 0x100
+    BL asmSetRegistr                 // Call the asmSetRegistr function
+ 8000218:	f7ff ff98 	bl	800014c <asmSetRegistr>
+
+    ldr r1, =I2C1_SR1                 // Load the address of I2C1_SR1 into register r1
+ 800021c:	494f      	ldr	r1, [pc, #316]	; (800035c <asmSsdSendCommand+0x3e>)
+    ldr r2, =I2C1_SR1_SB              // Load the value of I2C1_SR1_SB into register r2
+ 800021e:	f04f 0201 	mov.w	r2, #1
+    BL asmWhileBeq                   // Call the asmWhileBeq function
+ 8000222:	f7ff ff9b 	bl	800015c <asmWhileBeq>
+
+    ldr r1, =I2C1_DR                  // Load the address of I2C1_DR into register r1
+ 8000226:	494e      	ldr	r1, [pc, #312]	; (8000360 <asmSsdSendCommand+0x42>)
+    ldr r2, =SSD_ADRES_SLAVE          // Load the value of SSD_ADRES_SLAVE into register r2
+ 8000228:	f04f 0278 	mov.w	r2, #120	; 0x78
+    STR r2, [r1]                      // Write the value of r2 into the data register r1
+ 800022c:	600a      	str	r2, [r1, #0]
+
+    ldr r1, =I2C1_SR1                 // Load the address of I2C1_SR1 into register r1
+ 800022e:	494b      	ldr	r1, [pc, #300]	; (800035c <asmSsdSendCommand+0x3e>)
+    ldr r2, =I2C1_SR1_ADDR            // Load the value of I2C1_SR1_ADDR into register r2
+ 8000230:	f04f 0202 	mov.w	r2, #2
+    BL asmWhileBeq                   // Call the asmWhileBeq function
+ 8000234:	f7ff ff92 	bl	800015c <asmWhileBeq>
+
+    ldr r1, =I2C1_SR1                 // Load the address of I2C1_SR1 into register r1
+ 8000238:	4948      	ldr	r1, [pc, #288]	; (800035c <asmSsdSendCommand+0x3e>)
+    ldr r2, [r1]                      // Load the value stored at address r1 into register r2
+ 800023a:	680a      	ldr	r2, [r1, #0]
+    ldr r1, =I2C1_SR2                 // Load the address of I2C1_SR2 into register r1
+ 800023c:	4949      	ldr	r1, [pc, #292]	; (8000364 <asmSsdSendCommand+0x46>)
+    ldr r2, [r1]                      // Load the value stored at address r1 into register r2
+ 800023e:	680a      	ldr	r2, [r1, #0]
+
+    ldr r1, =I2C1_DR                  // Load the address of I2C1_DR into register r1
+ 8000240:	4947      	ldr	r1, [pc, #284]	; (8000360 <asmSsdSendCommand+0x42>)
+    ldr r2, =SSD_CONTRL_BYTE_COMMAND  // Load the value of SSD_CONTRL_BYTE_COMMAND into register r2
+ 8000242:	f04f 0200 	mov.w	r2, #0
+    STR r2, [r1]                      // Write the value of r2 into the data register r1
+ 8000246:	600a      	str	r2, [r1, #0]
+
+    ldr r1, =I2C1_SR1                 // Load the address of I2C1_SR1 into register r1
+ 8000248:	4944      	ldr	r1, [pc, #272]	; (800035c <asmSsdSendCommand+0x3e>)
+    ldr r2, =I2C1_SR1_TxE             // Load the value of I2C1_SR1_TxE into register r2
+ 800024a:	f04f 0280 	mov.w	r2, #128	; 0x80
+    BL asmWhileBeq                   // Call the asmWhileBeq function
+ 800024e:	f7ff ff85 	bl	800015c <asmWhileBeq>
+
+    ldr r7, =0xA8                     // Load the value 0xA8 into register r7
+ 8000252:	f04f 07a8 	mov.w	r7, #168	; 0xa8
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 8000256:	f000 f862 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0x3F                     // Load the value 0x3F into register r7
+ 800025a:	f04f 073f 	mov.w	r7, #63	; 0x3f
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 800025e:	f000 f85e 	bl	800031e <asmSsdSendCommand>
+    ldr r7, =0xD3                     // Load the value 0xD3 into register r7
+ 8000262:	f04f 07d3 	mov.w	r7, #211	; 0xd3
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 8000266:	f000 f85a 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0x00                     // Load the value 0x00 into register r7
+ 800026a:	f04f 0700 	mov.w	r7, #0
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 800026e:	f000 f856 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0x40                     // Load the value 0x40 into register r7
+ 8000272:	f04f 0740 	mov.w	r7, #64	; 0x40
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 8000276:	f000 f852 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0xC0                     // Load the value 0xC0 into register r7
+ 800027a:	f04f 07c0 	mov.w	r7, #192	; 0xc0
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 800027e:	f000 f84e 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0xDA                     // Load the value 0xDA into register r7
+ 8000282:	f04f 07da 	mov.w	r7, #218	; 0xda
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 8000286:	f000 f84a 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0x02                     // Load the value 0x02 into register r7
+ 800028a:	f04f 0702 	mov.w	r7, #2
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 800028e:	f000 f846 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0x81                     // Load the value 0x81 into register r7
+ 8000292:	f04f 0781 	mov.w	r7, #129	; 0x81
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 8000296:	f000 f842 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0x7F                     // Load the value 0x7F into register r7
+ 800029a:	f04f 077f 	mov.w	r7, #127	; 0x7f
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 800029e:	f000 f83e 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0xA4                     // Load the value 0xA4 into register r7
+ 80002a2:	f04f 07a4 	mov.w	r7, #164	; 0xa4
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 80002a6:	f000 f83a 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0xA6                     // Load the value 0xA6 into register r7
+ 80002aa:	f04f 07a6 	mov.w	r7, #166	; 0xa6
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 80002ae:	f000 f836 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0xD5                     // Load the value 0xD5 into register r7
+ 80002b2:	f04f 07d5 	mov.w	r7, #213	; 0xd5
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 80002b6:	f000 f832 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0x80                     // Load the value 0x80 into register r7
+ 80002ba:	f04f 0780 	mov.w	r7, #128	; 0x80
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 80002be:	f000 f82e 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0x8d                     // Load the value 0x8D into register r7
+ 80002c2:	f04f 078d 	mov.w	r7, #141	; 0x8d
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 80002c6:	f000 f82a 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0x14                     // Load the value 0x14 into register r7
+ 80002ca:	f04f 0714 	mov.w	r7, #20
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 80002ce:	f000 f826 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0x20                     // Load the value 0x20 into register r7
+ 80002d2:	f04f 0720 	mov.w	r7, #32
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 80002d6:	f000 f822 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0x2                      // Load the value 0x02 into register r7
+ 80002da:	f04f 0702 	mov.w	r7, #2
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 80002de:	f000 f81e 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0xB1                     // Load the value 0xB1 into register r7
+ 80002e2:	f04f 07b1 	mov.w	r7, #177	; 0xb1
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 80002e6:	f000 f81a 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0x12                     // Load the value 0x12 into register r7
+ 80002ea:	f04f 0712 	mov.w	r7, #18
+    BL asmSsdSendCommand              // Call the asmSsdSendCommand function
+ 80002ee:	f000 f816 	bl	800031e <asmSsdSendCommand>
+
+    ldr r7, =0xAF                     // Load the value 0xAF into register r3
+ 80002f2:	f04f 07af 	mov.w	r7, #175	; 0xaf
+    ldr r1, =I2C1_SR1                 // Load the address of I2C1_SR1 into register r1
+ 80002f6:	4919      	ldr	r1, [pc, #100]	; (800035c <asmSsdSendCommand+0x3e>)
+    ldr r2, =I2C1_SR1_BTF             // Load the value of I2C1_SR1_BTF into register r2
+ 80002f8:	f04f 0204 	mov.w	r2, #4
+    BL asmWhileBeq                   // Call the asmWhileBeq function
+ 80002fc:	f7ff ff2e 	bl	800015c <asmWhileBeq>
+
+    ldr r1, =I2C1_DR                  // Load the address of I2C1_DR into register r1
+ 8000300:	4917      	ldr	r1, [pc, #92]	; (8000360 <asmSsdSendCommand+0x42>)
+    STR r7, [r1]                      // Write the value of r3 into the data register r1
+ 8000302:	600f      	str	r7, [r1, #0]
+
+    ldr r1, =I2C1_CR1                 // Load the address of I2C1_CR1 into register r1
+ 8000304:	4911      	ldr	r1, [pc, #68]	; (800034c <asmSsdSendCommand+0x2e>)
+    ldr r2, =I2C1_CR1_STOP            // Load the value of I2C1_CR1_STOP into register r2
+ 8000306:	f44f 7200 	mov.w	r2, #512	; 0x200
+    BL asmSetRegistr                 // Call the asmSetRegistr function
+ 800030a:	f7ff ff1f 	bl	800014c <asmSetRegistr>
+
+0800030e <WaitForI2CNotBusy>:
+
+    // Code block to wait until the I2C bus becomes idle
+WaitForI2CNotBusy:
+
+    ldr r1, =I2C1_SR2                 // Load the value of the SR2 register into r2
+ 800030e:	4915      	ldr	r1, [pc, #84]	; (8000364 <asmSsdSendCommand+0x46>)
+    LDR R2, [r1]
+ 8000310:	680a      	ldr	r2, [r1, #0]
+
+    ldr r1, =I2C1_SR2_BUSY            // Load the BUSY bit in the SR2 register into r1
+ 8000312:	f04f 0102 	mov.w	r1, #2
+
+    tst R2, r1                         // Check if the BUSY bit is set
+ 8000316:	420a      	tst	r2, r1
+
+    BNE WaitForI2CNotBusy              // Branch to WaitForI2CNotBusy label if the BUSY bit is set
+ 8000318:	d1f9      	bne.n	800030e <WaitForI2CNotBusy>
+
+    // Restore the value of LR and exit the procedure
+    MOV LR, R5
+ 800031a:	46ae      	mov	lr, r5
+    BX LR
+ 800031c:	4770      	bx	lr
+
+0800031e <asmSsdSendCommand>:
+
+// Procedure to send a command to the SSD display
+asmSsdSendCommand:
+
+    MOV R6, LR                         // Save the current value of LR
+ 800031e:	4676      	mov	r6, lr
+    // Wait until the I2C transmission buffer becomes available
+    ldr r1, =I2C1_SR1
+ 8000320:	490e      	ldr	r1, [pc, #56]	; (800035c <asmSsdSendCommand+0x3e>)
+    ldr r2, =I2C1_SR1_TxE
+ 8000322:	f04f 0280 	mov.w	r2, #128	; 0x80
+    BL asmWhileBeq
+ 8000326:	f7ff ff19 	bl	800015c <asmWhileBeq>
+
+    // Write the command to the I2C data register
+    ldr r1, =I2C1_DR
+ 800032a:	490d      	ldr	r1, [pc, #52]	; (8000360 <asmSsdSendCommand+0x42>)
+    STR r7, [r1]
+ 800032c:	600f      	str	r7, [r1, #0]
+
+    // Wait for the completion of the command transmission
+    ldr r1, =I2C1_SR1
+ 800032e:	490b      	ldr	r1, [pc, #44]	; (800035c <asmSsdSendCommand+0x3e>)
+    ldr r2, =I2C1_SR1_BTF
+ 8000330:	f04f 0204 	mov.w	r2, #4
+    BL asmWhileBeq
+ 8000334:	f7ff ff12 	bl	800015c <asmWhileBeq>
+
+    // Restore the value of LR and exit the procedure
+    MOV LR, R6
+ 8000338:	46b6      	mov	lr, r6
+    BX LR
+ 800033a:	4770      	bx	lr
+    ldr r1, =RCC_APB1ENR              // Load the address of RCC_APB1ENR into register r1
+ 800033c:	4002101c 	.word	0x4002101c
+    ldr r1, =RCC_APB2ENR              // Load the address of RCC_APB2ENR into register r1
+ 8000340:	40021018 	.word	0x40021018
+    ldr r1, =GPIOB_CRL                // Load the address of GPIOB_CRL into register r1
+ 8000344:	40010c00 	.word	0x40010c00
+    ldr r1, =GPIOB_ODR                // Load the address of GPIOB_ODR into register r1
+ 8000348:	40010c0c 	.word	0x40010c0c
+    ldr r1, =I2C1_CR1                 // Load the address of I2C1_CR1 into register r1
+ 800034c:	40005400 	.word	0x40005400
+    ldr r1, =I2C1_CR2                 // Load the address of I2C1_CR2 into register r1
+ 8000350:	40005404 	.word	0x40005404
+    ldr r1, =I2C1_CCR                 // Load the address of I2C1_CCR into register r1
+ 8000354:	4000541c 	.word	0x4000541c
+    ldr r1, =I2C1_TRISE               // Load the address of I2C1_TRISE into register r1
+ 8000358:	40005420 	.word	0x40005420
+    ldr r1, =I2C1_SR1                 // Load the address of I2C1_SR1 into register r1
+ 800035c:	40005414 	.word	0x40005414
+    ldr r1, =I2C1_DR                  // Load the address of I2C1_DR into register r1
+ 8000360:	40005410 	.word	0x40005410
+    ldr r1, =I2C1_SR2                 // Load the address of I2C1_SR2 into register r1
+ 8000364:	40005418 	.word	0x40005418
+
+08000368 <EXTI0_IRQHandler>:
+.thumb_func
+.global EXTI0_IRQHandler
+.type EXTI0_IRQHandler, %function
+EXTI0_IRQHandler:
+    //CPSID i                  // Disable interrupts
+    MOV R5, LR              // Save LR value in register R5
+ 8000368:	4675      	mov	r5, lr
+    PUSH {R0, R1, R2, R3}   // Save registers R0-R3
+ 800036a:	b40f      	push	{r0, r1, r2, r3}
+// Load the previous state of B0
+LDR R3, =prevB0State
+ 800036c:	4b61      	ldr	r3, [pc, #388]	; (80004f4 <asmInterruptWFI+0x78>)
+LDR R3, [R3]
+ 800036e:	681b      	ldr	r3, [r3, #0]
+
+ldr r1, =GPIOB_IDR    // Load the address of the IDR register of port B into register r1
+ 8000370:	4961      	ldr	r1, [pc, #388]	; (80004f8 <asmInterruptWFI+0x7c>)
+ldr r2, [r1]          // Load the value of IDR into register r2
+ 8000372:	680a      	ldr	r2, [r1, #0]
+LDR r4, =GPIOB_IDR_IDR0
+ 8000374:	f04f 0401 	mov.w	r4, #1
+and r4, r4, r2
+ 8000378:	4014      	ands	r4, r2
+CMP r4, r3            // Perform the test instruction AND, result is not saved
+ 800037a:	429c      	cmp	r4, r3
+bne EndInterruptHandler       // Branch if flag 0 is not set
+ 800037c:	d176      	bne.n	800046c <EndInterruptHandler>
+LDR R4, =0x1
+ 800037e:	f04f 0401 	mov.w	r4, #1
+eor R3, R3, r4   // Invert the bit
+ 8000382:	4063      	eors	r3, r4
+LDR R1, =prevB0State
+ 8000384:	495b      	ldr	r1, [pc, #364]	; (80004f4 <asmInterruptWFI+0x78>)
+STR r3, [r1]
+ 8000386:	600b      	str	r3, [r1, #0]
+
+08000388 <WaitForI2CNotBusy>:
+
+    // Wait for I2C bus to be not busy
+    WaitForI2CNotBusy:
+ldr r1, =I2C1_SR2    // Load the address of the SR2 register into register r1
+ 8000388:	495c      	ldr	r1, [pc, #368]	; (80004fc <asmInterruptWFI+0x80>)
+LDR R2, [r1]          // Load the value of the SR2 register into R2
+ 800038a:	680a      	ldr	r2, [r1, #0]
+ldr r1, =I2C1_SR2_BUSY  // Load the address of the BUSY bit into register r1
+ 800038c:	f04f 0102 	mov.w	r1, #2
+
+tst R2, r1            // Check the BUSY bit
+ 8000390:	420a      	tst	r2, r1
+BNE WaitForI2CNotBusy // Branch if BUSY bit is set
+ 8000392:	d1f9      	bne.n	8000388 <WaitForI2CNotBusy>
+
+ldr r1, =I2C1_CR1     // Load the address of the CR1 register into register r1
+ 8000394:	495a      	ldr	r1, [pc, #360]	; (8000500 <asmInterruptWFI+0x84>)
+ldr r2, =I2C1_CR1_START // Load the value of START into register r2
+ 8000396:	f44f 7280 	mov.w	r2, #256	; 0x100
+BL asmSetRegistr      // Set the START bit in the CR1 register
+ 800039a:	f7ff fed7 	bl	800014c <asmSetRegistr>
+
+ldr r1, =I2C1_SR1     // Load the address of the SR1 register into register r1
+ 800039e:	4959      	ldr	r1, [pc, #356]	; (8000504 <asmInterruptWFI+0x88>)
+ldr r2, =I2C1_SR1_SB  // Load the value of SB into register r2
+ 80003a0:	f04f 0201 	mov.w	r2, #1
+BL asmWhileBeq        // Wait for the start condition to be generated
+ 80003a4:	f7ff feda 	bl	800015c <asmWhileBeq>
+
+ldr r1, =I2C1_DR      // Load the address of the DR register into register r1
+ 80003a8:	4957      	ldr	r1, [pc, #348]	; (8000508 <asmInterruptWFI+0x8c>)
+ldr r2, =SSD_ADRES_SLAVE  // Load the value of the device address into register r2
+ 80003aa:	f04f 0278 	mov.w	r2, #120	; 0x78
+STR r2, [r1]          // Write the device address to the DR register
+ 80003ae:	600a      	str	r2, [r1, #0]
+
+ldr r1, =I2C1_SR1     // Load the address of the SR1 register into register r1
+ 80003b0:	4954      	ldr	r1, [pc, #336]	; (8000504 <asmInterruptWFI+0x88>)
+ldr r2, =I2C1_SR1_ADDR  // Load the value of ADDR into register r2
+ 80003b2:	f04f 0202 	mov.w	r2, #2
+BL asmWhileBeq        // Wait for the address transmission to complete
+ 80003b6:	f7ff fed1 	bl	800015c <asmWhileBeq>
+
+ldr r1, =I2C1_SR1     // Load the address of the SR1 register into register r1
+ 80003ba:	4952      	ldr	r1, [pc, #328]	; (8000504 <asmInterruptWFI+0x88>)
+ldr r2, [r1]          // Load the value of the SR1 register into r2
+ 80003bc:	680a      	ldr	r2, [r1, #0]
+ldr r1, =I2C1_SR2     // Load the address of the SR2 register into register r1
+ 80003be:	494f      	ldr	r1, [pc, #316]	; (80004fc <asmInterruptWFI+0x80>)
+ldr r2, [r1]          // Load the value of the SR2 register into r2
+ 80003c0:	680a      	ldr	r2, [r1, #0]
+
+ldr r1, =I2C1_DR      // Load the address of the DR register into register r1
+ 80003c2:	4951      	ldr	r1, [pc, #324]	; (8000508 <asmInterruptWFI+0x8c>)
+ldr r2, =SSD_CONTRL_BYTE_COMMAND  // Load the value of the control command into register r2
+ 80003c4:	f04f 0200 	mov.w	r2, #0
+STR r2, [r1]          // Write the control command to the DR register
+ 80003c8:	600a      	str	r2, [r1, #0]
+
+ldr r1, =I2C1_SR1     // Load the address of the SR1 register into register r1
+ 80003ca:	494e      	ldr	r1, [pc, #312]	; (8000504 <asmInterruptWFI+0x88>)
+ldr r2, =I2C1_SR1_TxE // Load the value of TxE into register r2
+ 80003cc:	f04f 0280 	mov.w	r2, #128	; 0x80
+BL asmWhileBeq        // Wait for the completion of command transmission
+ 80003d0:	f7ff fec4 	bl	800015c <asmWhileBeq>
+
+ldr r7, =0x20         // Load the value 0x20 into register r7
+ 80003d4:	f04f 0720 	mov.w	r7, #32
+BL asmSsdSendCommand  // Send command
+ 80003d8:	f7ff ffa1 	bl	800031e <asmSsdSendCommand>
+ldr r7, =0x2          // Load the value 0x2 into register r7
+ 80003dc:	f04f 0702 	mov.w	r7, #2
+BL asmSsdSendCommand  // Send command
+ 80003e0:	f7ff ff9d 	bl	800031e <asmSsdSendCommand>
+ldr r7, =0xB1         // Load the value 0xB1 into register r7
+ 80003e4:	f04f 07b1 	mov.w	r7, #177	; 0xb1
+BL asmSsdSendCommand  // Send command
+ 80003e8:	f7ff ff99 	bl	800031e <asmSsdSendCommand>
+ldr r7, =0x12         // Load the value 0x12 into register r7
+ 80003ec:	f04f 0712 	mov.w	r7, #18
+BL asmSsdSendCommand  // Send command
+ 80003f0:	f7ff ff95 	bl	800031e <asmSsdSendCommand>
+
+ldr r1, =I2C1_CR1     // Load the address of the CR1 register into register r1
+ 80003f4:	4942      	ldr	r1, [pc, #264]	; (8000500 <asmInterruptWFI+0x84>)
+ldr r2, =I2C1_CR1_STOP // Load the value of STOP into register r2
+ 80003f6:	f44f 7200 	mov.w	r2, #512	; 0x200
+BL asmSetRegistr      // Set the STOP bit in the CR1 register
+ 80003fa:	f7ff fea7 	bl	800014c <asmSetRegistr>
+
+ldr r1, =I2C1_CR1     // Load the address of the CR1 register into register r1
+ 80003fe:	4940      	ldr	r1, [pc, #256]	; (8000500 <asmInterruptWFI+0x84>)
+ldr r2, =I2C1_CR1_START  // Load the value of START into register r2
+ 8000400:	f44f 7280 	mov.w	r2, #256	; 0x100
+BL asmSetRegistr      // Set the START bit in the CR1 register
+ 8000404:	f7ff fea2 	bl	800014c <asmSetRegistr>
+
+ldr r1, =I2C1_SR1     // Load the address of the SR1 register into register r1
+ 8000408:	493e      	ldr	r1, [pc, #248]	; (8000504 <asmInterruptWFI+0x88>)
+ldr r2, =I2C1_SR1_SB  // Load the value of SB into register r2
+ 800040a:	f04f 0201 	mov.w	r2, #1
+BL asmWhileBeq        // Wait for the start condition to be generated
+ 800040e:	f7ff fea5 	bl	800015c <asmWhileBeq>
+
+ldr r1, =I2C1_DR      // Load the address of the DR register into register r1
+ 8000412:	493d      	ldr	r1, [pc, #244]	; (8000508 <asmInterruptWFI+0x8c>)
+ldr r2, =SSD_ADRES_SLAVE  // Load the value of the device address into register r2
+ 8000414:	f04f 0278 	mov.w	r2, #120	; 0x78
+STR r2, [r1]          // Write the device address to the DR register
+ 8000418:	600a      	str	r2, [r1, #0]
+
+ldr r1, =I2C1_SR1     // Load the address of the SR1 register into register r1
+ 800041a:	493a      	ldr	r1, [pc, #232]	; (8000504 <asmInterruptWFI+0x88>)
+ldr r2, =I2C1_SR1_ADDR  // Load the value of ADDR into register r2
+ 800041c:	f04f 0202 	mov.w	r2, #2
+BL asmWhileBeq        // Wait for the address transmission to complete
+ 8000420:	f7ff fe9c 	bl	800015c <asmWhileBeq>
+
+ldr r1, =I2C1_SR1     // Load the address of the SR1 register into register r1
+ 8000424:	4937      	ldr	r1, [pc, #220]	; (8000504 <asmInterruptWFI+0x88>)
+ldr r2, [r1]          // Load the value of the SR1 register into r2
+ 8000426:	680a      	ldr	r2, [r1, #0]
+ldr r1, =I2C1_SR2     // Load the address of the SR2 register into register r1
+ 8000428:	4934      	ldr	r1, [pc, #208]	; (80004fc <asmInterruptWFI+0x80>)
+ldr r2, [r1]          // Load the value of the SR2 register into r2
+ 800042a:	680a      	ldr	r2, [r1, #0]
+
+ldr r1, =I2C1_DR      // Load the address of the DR register into register r1
+ 800042c:	4936      	ldr	r1, [pc, #216]	; (8000508 <asmInterruptWFI+0x8c>)
+ldr r2, =SSD_CONTRL_BYTE_DATA  // Load the value of the control command into register r2
+ 800042e:	f04f 0240 	mov.w	r2, #64	; 0x40
+STR r2, [r1]          // Write the control command to the DR register
+ 8000432:	600a      	str	r2, [r1, #0]
+
+ldr r1, =I2C1_SR1     // Load the address of the SR1 register into register r1
+ 8000434:	4933      	ldr	r1, [pc, #204]	; (8000504 <asmInterruptWFI+0x88>)
+ldr r2, =I2C1_SR1_TxE // Load the value of TxE into register r2
+ 8000436:	f04f 0280 	mov.w	r2, #128	; 0x80
+BL asmWhileBeq        // Wait for the completion of command transmission
+ 800043a:	f7ff fe8f 	bl	800015c <asmWhileBeq>
+
+ldr r1, =GPIOB_IDR    // Load the address of the IDR register of port B into register r1
+ 800043e:	492e      	ldr	r1, [pc, #184]	; (80004f8 <asmInterruptWFI+0x7c>)
+ldr r2, [r1]          // Load the value of IDR into register r2
+ 8000440:	680a      	ldr	r2, [r1, #0]
+ldr r3, =GPIOB_IDR_IDR0  // Load the value 0x1 into register r3
+ 8000442:	f04f 0301 	mov.w	r3, #1
+tst r2, r3            // Execute the test instruction AND, result is not saved
+ 8000446:	421a      	tst	r2, r3
+beq LabelIfZero       // Branch if the result is equal to 0 (bit is not set)
+ 8000448:	d008      	beq.n	800045c <LabelIfZero>
+ldr r0, =dataHello    // Load the address of the array into register r0
+ 800044a:	4830      	ldr	r0, [pc, #192]	; (800050c <asmInterruptWFI+0x90>)
+mov r4, #0            // Initialize the index
+ 800044c:	2400      	movs	r4, #0
+
+0800044e <loop_for>:
+
+loop_for:             // Loop to iterate through the array
+ldrb r7, [r0, r4]    // Load a byte from the array at the address (r0 + r1) into register r2
+ 800044e:	5d07      	ldrb	r7, [r0, r4]
+BL asmSsdSendCommand  // Send the byte
+ 8000450:	f7ff ff65 	bl	800031e <asmSsdSendCommand>
+add r4, r4, #1        // Increment the index
+ 8000454:	3401      	adds	r4, #1
+cmp r4, #50           // Check for the end of the array (if index >= array size)
+ 8000456:	2c32      	cmp	r4, #50	; 0x32
+ble loop_for
+ 8000458:	ddf9      	ble.n	800044e <loop_for>
+
+b EndIf               // Jump to the EndIf label
+ 800045a:	e002      	b.n	8000462 <EndIf>
+
+0800045c <LabelIfZero>:
+
+LabelIfZero:          // Code for the case when the bit is not set (executes if the bit is not set)
+
+ldr r0, =dataVOID     // Load the address of the array into register r0
+ 800045c:	482c      	ldr	r0, [pc, #176]	; (8000510 <asmInterruptWFI+0x94>)
+mov r4, #0            // Initialize the index
+ 800045e:	2400      	movs	r4, #0
+b loop_for            // Jump to the loop for iterating through the array
+ 8000460:	e7f5      	b.n	800044e <loop_for>
+
+08000462 <EndIf>:
+
+EndIf:                // End of the condition
+
+ldr r1, =I2C1_CR1     // Load the address of the CR1 register into register r1
+ 8000462:	4927      	ldr	r1, [pc, #156]	; (8000500 <asmInterruptWFI+0x84>)
+ldr r2, =I2C1_CR1_STOP // Load the value of STOP into register r2
+ 8000464:	f44f 7200 	mov.w	r2, #512	; 0x200
+BL asmSetRegistr      // Set the STOP bit in the CR1 register
+ 8000468:	f7ff fe70 	bl	800014c <asmSetRegistr>
+
+0800046c <EndInterruptHandler>:
+
+EndInterruptHandler:
+ldr r1, =EXTI_PR      // Load the address of the PR register into register r1
+ 800046c:	4929      	ldr	r1, [pc, #164]	; (8000514 <asmInterruptWFI+0x98>)
+ldr r2, =EXTI_PR_PR0  // Load the value of PR0 into register r2
+ 800046e:	f04f 0201 	mov.w	r2, #1
+BL asmSetRegistr      // Set the PR0 bit in the PR register
+ 8000472:	f7ff fe6b 	bl	800014c <asmSetRegistr>
+
+// End of the handler
+
+// CPSIE i  // Enable interrupts
+POP {R0, R1, R2, R3}     // Restore registers from the stack
+ 8000476:	bc0f      	pop	{r0, r1, r2, r3}
+MOV LR, R5               // Restore the value of LR
+ 8000478:	46ae      	mov	lr, r5
+BX LR                    // Exit the handler
+ 800047a:	4770      	bx	lr
+
+0800047c <asmInterruptWFI>:
+
+// Entry point
+asmInterruptWFI:
+MOV R6, LR  // Save the value of LR in register R5
+ 800047c:	4676      	mov	r6, lr
+
+// Enable clock for the external interrupt controller
+ldr r1, =RCC_APB2ENR   // Load the address of the RCC_APB1ENR register into register r1
+ 800047e:	4926      	ldr	r1, [pc, #152]	; (8000518 <asmInterruptWFI+0x9c>)
+ldr r2, =RCC_APB2ENR_AFIOEN   // Load the value of RCC_APB2ENR_AFIOEN into register r2
+ 8000480:	f04f 0201 	mov.w	r2, #1
+BL asmSetRegistr   // Call the function to set the bit in the register
+ 8000484:	f7ff fe62 	bl	800014c <asmSetRegistr>
+
+// Configure port B
+ldr r1, =GPIOB_CRL   // Load the address of the GPIOB_CRL register into register r1
+ 8000488:	4924      	ldr	r1, [pc, #144]	; (800051c <asmInterruptWFI+0xa0>)
+ldr r2, =GPIOB_CRL_MODE   // Load the value of GPIOB_CRL_MODE into register r2
+ 800048a:	f04f 0203 	mov.w	r2, #3
+BL asmResetRegistr   // Call the function to reset bits in the register
+ 800048e:	f7ff fe61 	bl	8000154 <asmResetRegistr>
+
+ldr r1, =GPIOB_CRL   // Load the address of the GPIOB_CRL register into register r1
+ 8000492:	4922      	ldr	r1, [pc, #136]	; (800051c <asmInterruptWFI+0xa0>)
+ldr r2, =GPIOB_CRL_CNF_CLEAR   // Load the value of GPIOB_CRL_CNF_CLEAR into register r2
+ 8000494:	f04f 020c 	mov.w	r2, #12
+BL asmResetRegistr   // Call the function to reset bits in the register
+ 8000498:	f7ff fe5c 	bl	8000154 <asmResetRegistr>
+
+ldr r1, =GPIOB_CRL   // Load the address of the GPIOB_CRL register into register r1
+ 800049c:	491f      	ldr	r1, [pc, #124]	; (800051c <asmInterruptWFI+0xa0>)
+ldr r2, =GPIOB_CRL_CNF   // Load the value of GPIOB_CRL_CNF into register r2
+ 800049e:	f04f 0208 	mov.w	r2, #8
+BL asmSetRegistr   // Call the function to set bits in the register
+ 80004a2:	f7ff fe53 	bl	800014c <asmSetRegistr>
+
+ldr r1, =GPIOB_ODR   // Load the address of the GPIOB_ODR register into register r1
+ 80004a6:	491e      	ldr	r1, [pc, #120]	; (8000520 <asmInterruptWFI+0xa4>)
+ldr r2, =GPIOB_ODR_ODR0   // Load the value of GPIOB_ODR_ODR0 into register r2
+ 80004a8:	f04f 0201 	mov.w	r2, #1
+BL asmSetRegistr   // Call the function to set a bit in the register
+ 80004ac:	f7ff fe4e 	bl	800014c <asmSetRegistr>
+
+// Configure external interrupt EXTI0
+ldr r1, =EXTI_IMR   // Load the address of the EXTI_IMR register into register r1
+ 80004b0:	491c      	ldr	r1, [pc, #112]	; (8000524 <asmInterruptWFI+0xa8>)
+ldr r2, =EXTI_IMR_MR0   // Load the value of EXTI_IMR_MR0 into register r2
+ 80004b2:	f04f 0201 	mov.w	r2, #1
+BL asmSetRegistr   // Call the function to set a bit in the register
+ 80004b6:	f7ff fe49 	bl	800014c <asmSetRegistr>
+
+ldr r1, =EXTI_RTSR   // Load the address of the EXTI_RTSR register into register r1
+ 80004ba:	491b      	ldr	r1, [pc, #108]	; (8000528 <asmInterruptWFI+0xac>)
+ldr r2, =EXTI_RTSR_TR0   // Load the value of EXTI_RTSR_TR0 into register r2
+ 80004bc:	f04f 0201 	mov.w	r2, #1
+BL asmSetRegistr   // Call the function to set a bit in the register
+ 80004c0:	f7ff fe44 	bl	800014c <asmSetRegistr>
+
+ldr r1, =EXTI_FTSR   // Load the address of the EXTI_FTSR register into register r1
+ 80004c4:	4919      	ldr	r1, [pc, #100]	; (800052c <asmInterruptWFI+0xb0>)
+ldr r2, =EXTI_FTSR_TR0   // Load the value of EXTI_FTSR_TR0 into register r2
+ 80004c6:	f04f 0201 	mov.w	r2, #1
+BL asmSetRegistr   // Call the function to set a bit in the register
+ 80004ca:	f7ff fe3f 	bl	800014c <asmSetRegistr>
+
+// Enable interrupt
+ldr r1, =NVIC_ISER0   // Load the address of the NVIC_ISER0 register into register r1
+ 80004ce:	4918      	ldr	r1, [pc, #96]	; (8000530 <asmInterruptWFI+0xb4>)
+ldr r2, =NVIC_ISER0_EXTI0   // Load the value of NVIC_ISER0_EXTI0 into register r2
+ 80004d0:	f04f 0240 	mov.w	r2, #64	; 0x40
+BL asmSetRegistr   // Call the function to set a bit in the register
+ 80004d4:	f7ff fe3a 	bl	800014c <asmSetRegistr>
+
+LDR R0, =AFIO_EXTICR1      // Load the address of the AFIO_EXTICR1 register
+ 80004d8:	4816      	ldr	r0, [pc, #88]	; (8000534 <asmInterruptWFI+0xb8>)
+LDR R1, [R0]               // Load the current value of the register
+ 80004da:	6801      	ldr	r1, [r0, #0]
+LDR R2, =1
+ 80004dc:	f04f 0201 	mov.w	r2, #1
+ORR R1, R1, R2
+ 80004e0:	4311      	orrs	r1, r2
+// Set EXTI0 bits
+STR R1, [R0]               // Save the new value to the AFIO_EXTICR1 register
+ 80004e2:	6001      	str	r1, [r0, #0]
+
+// Enable debugging mode
+ldr r1, =DBGMCU_CR   // Load the address of the DBGMCU_CR register into register r1
+ 80004e4:	4914      	ldr	r1, [pc, #80]	; (8000538 <asmInterruptWFI+0xbc>)
+ldr r2, =DBG_SLEEP   // Load the value of DBG_SLEEP into register r2
+ 80004e6:	f04f 0201 	mov.w	r2, #1
+BL asmSetRegistr   // Call the function to set a bit in the register
+ 80004ea:	f7ff fe2f 	bl	800014c <asmSetRegistr>
+MOV LR, R6   // Restore the value of LR from register R5
+ 80004ee:	46b6      	mov	lr, r6
+BX LR   // Return from the interrupt
+ 80004f0:	4770      	bx	lr
+ 80004f2:	0000      	.short	0x0000
+LDR R3, =prevB0State
+ 80004f4:	20000000 	.word	0x20000000
+ldr r1, =GPIOB_IDR    // Load the address of the IDR register of port B into register r1
+ 80004f8:	40010c08 	.word	0x40010c08
+ldr r1, =I2C1_SR2    // Load the address of the SR2 register into register r1
+ 80004fc:	40005418 	.word	0x40005418
+ldr r1, =I2C1_CR1     // Load the address of the CR1 register into register r1
+ 8000500:	40005400 	.word	0x40005400
+ldr r1, =I2C1_SR1     // Load the address of the SR1 register into register r1
+ 8000504:	40005414 	.word	0x40005414
+ldr r1, =I2C1_DR      // Load the address of the DR register into register r1
+ 8000508:	40005410 	.word	0x40005410
+ldr r0, =dataHello    // Load the address of the array into register r0
+ 800050c:	20000004 	.word	0x20000004
+ldr r0, =dataVOID     // Load the address of the array into register r0
+ 8000510:	20000060 	.word	0x20000060
+ldr r1, =EXTI_PR      // Load the address of the PR register into register r1
+ 8000514:	40010414 	.word	0x40010414
+ldr r1, =RCC_APB2ENR   // Load the address of the RCC_APB1ENR register into register r1
+ 8000518:	40021018 	.word	0x40021018
+ldr r1, =GPIOB_CRL   // Load the address of the GPIOB_CRL register into register r1
+ 800051c:	40010c00 	.word	0x40010c00
+ldr r1, =GPIOB_ODR   // Load the address of the GPIOB_ODR register into register r1
+ 8000520:	40010c0c 	.word	0x40010c0c
+ldr r1, =EXTI_IMR   // Load the address of the EXTI_IMR register into register r1
+ 8000524:	40010400 	.word	0x40010400
+ldr r1, =EXTI_RTSR   // Load the address of the EXTI_RTSR register into register r1
+ 8000528:	40010408 	.word	0x40010408
+ldr r1, =EXTI_FTSR   // Load the address of the EXTI_FTSR register into register r1
+ 800052c:	4001040c 	.word	0x4001040c
+ldr r1, =NVIC_ISER0   // Load the address of the NVIC_ISER0 register into register r1
+ 8000530:	e000e100 	.word	0xe000e100
+LDR R0, =AFIO_EXTICR1      // Load the address of the AFIO_EXTICR1 register
+ 8000534:	40010008 	.word	0x40010008
+ldr r1, =DBGMCU_CR   // Load the address of the DBGMCU_CR register into register r1
+ 8000538:	e0042004 	.word	0xe0042004
+
+0800053c <asmMain>:
+.global asmMain   // Global declaration of the asmMain function
+
+asmMain:   // Start of the asmMain function
+
+   B loop   // Unconditional branch (jump) to the loop label
+ 800053c:	e7ff      	b.n	800053e <loop>
+
+0800053e <loop>:
+
+loop:   // Loop label
+
+    NOP   // No Operation (idle, empty operation)
+ 800053e:	46c0      	nop			; (mov r8, r8)
+    NOP   // No Operation
+ 8000540:	46c0      	nop			; (mov r8, r8)
+    NOP   // No Operation
+ 8000542:	46c0      	nop			; (mov r8, r8)
+    WFI   // Wait for Interrupt (wait for an interrupt to occur)
+ 8000544:	bf30      	wfi
+    NOP   // No Operation
+ 8000546:	46c0      	nop			; (mov r8, r8)
+    NOP   // No Operation
+ 8000548:	46c0      	nop			; (mov r8, r8)
+    NOP   // No Operation
+ 800054a:	46c0      	nop			; (mov r8, r8)
+
+    // Infinite loop
+    B loop   // Unconditional branch to the loop label
+ 800054c:	e7f7      	b.n	800053e <loop>
+
+    BX LR   // Return from the function
+ 800054e:	4770      	bx	lr
+
+08000550 <main>:
+    0x00, 0x00, 0x00, 0x00, 0x0, 0x0, 0x0, 0x0, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x0, 0x0, 0x0, 0x0, 0x00, 0x00,
+};
+
+int main(void)
+{
+ 8000550:	b580      	push	{r7, lr}
+ 8000552:	af00      	add	r7, sp, #0
+    asmClockEnable();      // Enable clock
+ 8000554:	f7ff fe06 	bl	8000164 <asmClockEnable>
+    // Включение макроса DWT_CYCCNT
+       CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+ 8000558:	4b13      	ldr	r3, [pc, #76]	; (80005a8 <main+0x58>)
+ 800055a:	68db      	ldr	r3, [r3, #12]
+ 800055c:	4a12      	ldr	r2, [pc, #72]	; (80005a8 <main+0x58>)
+ 800055e:	f043 7380 	orr.w	r3, r3, #16777216	; 0x1000000
+ 8000562:	60d3      	str	r3, [r2, #12]
+       DWT->CYCCNT = 0;
+ 8000564:	4b11      	ldr	r3, [pc, #68]	; (80005ac <main+0x5c>)
+ 8000566:	2200      	movs	r2, #0
+ 8000568:	605a      	str	r2, [r3, #4]
+       DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+ 800056a:	4b10      	ldr	r3, [pc, #64]	; (80005ac <main+0x5c>)
+ 800056c:	681b      	ldr	r3, [r3, #0]
+ 800056e:	4a0f      	ldr	r2, [pc, #60]	; (80005ac <main+0x5c>)
+ 8000570:	f043 0301 	orr.w	r3, r3, #1
+ 8000574:	6013      	str	r3, [r2, #0]
+           // Запуск макроса DWT_CYCCNT
+           start_time = DWT->CYCCNT;
+ 8000576:	4b0d      	ldr	r3, [pc, #52]	; (80005ac <main+0x5c>)
+ 8000578:	685b      	ldr	r3, [r3, #4]
+ 800057a:	4a0d      	ldr	r2, [pc, #52]	; (80005b0 <main+0x60>)
+ 800057c:	6013      	str	r3, [r2, #0]
+    asmI2cEnable();        // Enable I2C
+ 800057e:	f7ff fe0b 	bl	8000198 <asmI2cEnable>
+    asmInterruptWFI();     // Enable Wait for Interrupt mode
+ 8000582:	f7ff ff7b 	bl	800047c <asmInterruptWFI>
+
+           // Остановка макроса DWT_CYCCNT
+              end_time = DWT->CYCCNT;
+ 8000586:	4b09      	ldr	r3, [pc, #36]	; (80005ac <main+0x5c>)
+ 8000588:	685b      	ldr	r3, [r3, #4]
+ 800058a:	4a0a      	ldr	r2, [pc, #40]	; (80005b4 <main+0x64>)
+ 800058c:	6013      	str	r3, [r2, #0]
+              elapsed_time = end_time - start_time;
+ 800058e:	4b09      	ldr	r3, [pc, #36]	; (80005b4 <main+0x64>)
+ 8000590:	681a      	ldr	r2, [r3, #0]
+ 8000592:	4b07      	ldr	r3, [pc, #28]	; (80005b0 <main+0x60>)
+ 8000594:	681b      	ldr	r3, [r3, #0]
+ 8000596:	1ad3      	subs	r3, r2, r3
+ 8000598:	4a07      	ldr	r2, [pc, #28]	; (80005b8 <main+0x68>)
+ 800059a:	6013      	str	r3, [r2, #0]
+    asmMain();             // Call the main assembly function
+ 800059c:	f7ff ffce 	bl	800053c <asmMain>
+ 80005a0:	2300      	movs	r3, #0
+}
+ 80005a2:	4618      	mov	r0, r3
+ 80005a4:	bd80      	pop	{r7, pc}
+ 80005a6:	bf00      	nop
+ 80005a8:	e000edf0 	.word	0xe000edf0
+ 80005ac:	e0001000 	.word	0xe0001000
+ 80005b0:	20000054 	.word	0x20000054
+ 80005b4:	20000058 	.word	0x20000058
+ 80005b8:	2000005c 	.word	0x2000005c
+
+080005bc <NMI_Handler>:
+/******************************************************************************/
+/**
+  * @brief This function handles Non maskable interrupt.
+  */
+void NMI_Handler(void)
+{
+ 80005bc:	b480      	push	{r7}
+ 80005be:	af00      	add	r7, sp, #0
+  /* USER CODE BEGIN NonMaskableInt_IRQn 0 */
+
+  /* USER CODE END NonMaskableInt_IRQn 0 */
+  /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
+  while (1)
+ 80005c0:	e7fe      	b.n	80005c0 <NMI_Handler+0x4>
+
+080005c2 <HardFault_Handler>:
+
+/**
+  * @brief This function handles Hard fault interrupt.
+  */
+void HardFault_Handler(void)
+{
+ 80005c2:	b480      	push	{r7}
+ 80005c4:	af00      	add	r7, sp, #0
+  /* USER CODE BEGIN HardFault_IRQn 0 */
+
+  /* USER CODE END HardFault_IRQn 0 */
+  while (1)
+ 80005c6:	e7fe      	b.n	80005c6 <HardFault_Handler+0x4>
+
+080005c8 <MemManage_Handler>:
+
+/**
+  * @brief This function handles Memory management fault.
+  */
+void MemManage_Handler(void)
+{
+ 80005c8:	b480      	push	{r7}
+ 80005ca:	af00      	add	r7, sp, #0
+  /* USER CODE BEGIN MemoryManagement_IRQn 0 */
+
+  /* USER CODE END MemoryManagement_IRQn 0 */
+  while (1)
+ 80005cc:	e7fe      	b.n	80005cc <MemManage_Handler+0x4>
+
+080005ce <BusFault_Handler>:
+
+/**
+  * @brief This function handles Prefetch fault, memory access fault.
+  */
+void BusFault_Handler(void)
+{
+ 80005ce:	b480      	push	{r7}
+ 80005d0:	af00      	add	r7, sp, #0
+  /* USER CODE BEGIN BusFault_IRQn 0 */
+
+  /* USER CODE END BusFault_IRQn 0 */
+  while (1)
+ 80005d2:	e7fe      	b.n	80005d2 <BusFault_Handler+0x4>
+
+080005d4 <UsageFault_Handler>:
+
+/**
+  * @brief This function handles Undefined instruction or illegal state.
+  */
+void UsageFault_Handler(void)
+{
+ 80005d4:	b480      	push	{r7}
+ 80005d6:	af00      	add	r7, sp, #0
+  /* USER CODE BEGIN UsageFault_IRQn 0 */
+
+  /* USER CODE END UsageFault_IRQn 0 */
+  while (1)
+ 80005d8:	e7fe      	b.n	80005d8 <UsageFault_Handler+0x4>
+
+080005da <SVC_Handler>:
+
+/**
+  * @brief This function handles System service call via SWI instruction.
+  */
+void SVC_Handler(void)
+{
+ 80005da:	b480      	push	{r7}
+ 80005dc:	af00      	add	r7, sp, #0
+
+  /* USER CODE END SVCall_IRQn 0 */
+  /* USER CODE BEGIN SVCall_IRQn 1 */
+
+  /* USER CODE END SVCall_IRQn 1 */
+}
+ 80005de:	bf00      	nop
+ 80005e0:	46bd      	mov	sp, r7
+ 80005e2:	bc80      	pop	{r7}
+ 80005e4:	4770      	bx	lr
+
+080005e6 <DebugMon_Handler>:
+
+/**
+  * @brief This function handles Debug monitor.
+  */
+void DebugMon_Handler(void)
+{
+ 80005e6:	b480      	push	{r7}
+ 80005e8:	af00      	add	r7, sp, #0
+
+  /* USER CODE END DebugMonitor_IRQn 0 */
+  /* USER CODE BEGIN DebugMonitor_IRQn 1 */
+
+  /* USER CODE END DebugMonitor_IRQn 1 */
+}
+ 80005ea:	bf00      	nop
+ 80005ec:	46bd      	mov	sp, r7
+ 80005ee:	bc80      	pop	{r7}
+ 80005f0:	4770      	bx	lr
+
+080005f2 <PendSV_Handler>:
+
+/**
+  * @brief This function handles Pendable request for system service.
+  */
+void PendSV_Handler(void)
+{
+ 80005f2:	b480      	push	{r7}
+ 80005f4:	af00      	add	r7, sp, #0
+
+  /* USER CODE END PendSV_IRQn 0 */
+  /* USER CODE BEGIN PendSV_IRQn 1 */
+
+  /* USER CODE END PendSV_IRQn 1 */
+}
+ 80005f6:	bf00      	nop
+ 80005f8:	46bd      	mov	sp, r7
+ 80005fa:	bc80      	pop	{r7}
+ 80005fc:	4770      	bx	lr
+
+080005fe <SysTick_Handler>:
+
+/**
+  * @brief This function handles System tick timer.
+  */
+void SysTick_Handler(void)
+{
+ 80005fe:	b580      	push	{r7, lr}
+ 8000600:	af00      	add	r7, sp, #0
+  /* USER CODE BEGIN SysTick_IRQn 0 */
+
+  /* USER CODE END SysTick_IRQn 0 */
+  HAL_IncTick();
+ 8000602:	f000 f82f 	bl	8000664 <HAL_IncTick>
+  /* USER CODE BEGIN SysTick_IRQn 1 */
+
+  /* USER CODE END SysTick_IRQn 1 */
+}
+ 8000606:	bf00      	nop
+ 8000608:	bd80      	pop	{r7, pc}
+
+0800060a <SystemInit>:
+  * @note   This function should be used only after reset.
+  * @param  None
+  * @retval None
+  */
+void SystemInit (void)
+{
+ 800060a:	b480      	push	{r7}
+ 800060c:	af00      	add	r7, sp, #0
+
+  /* Configure the Vector Table location -------------------------------------*/
+#if defined(USER_VECT_TAB_ADDRESS)
+  SCB->VTOR = VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal SRAM. */
+#endif /* USER_VECT_TAB_ADDRESS */
+}
+ 800060e:	bf00      	nop
+ 8000610:	46bd      	mov	sp, r7
+ 8000612:	bc80      	pop	{r7}
+ 8000614:	4770      	bx	lr
+	...
+
+08000618 <Reset_Handler>:
+  .weak Reset_Handler
+  .type Reset_Handler, %function
+Reset_Handler:
+
+/* Call the clock system initialization function.*/
+    bl  SystemInit
+ 8000618:	f7ff fff7 	bl	800060a <SystemInit>
+
+/* Copy the data segment initializers from flash to SRAM */
+  ldr r0, =_sdata
+ 800061c:	480b      	ldr	r0, [pc, #44]	; (800064c <LoopFillZerobss+0xe>)
+  ldr r1, =_edata
+ 800061e:	490c      	ldr	r1, [pc, #48]	; (8000650 <LoopFillZerobss+0x12>)
+  ldr r2, =_sidata
+ 8000620:	4a0c      	ldr	r2, [pc, #48]	; (8000654 <LoopFillZerobss+0x16>)
+  movs r3, #0
+ 8000622:	2300      	movs	r3, #0
+  b LoopCopyDataInit
+ 8000624:	e002      	b.n	800062c <LoopCopyDataInit>
+
+08000626 <CopyDataInit>:
+
+CopyDataInit:
+  ldr r4, [r2, r3]
+ 8000626:	58d4      	ldr	r4, [r2, r3]
+  str r4, [r0, r3]
+ 8000628:	50c4      	str	r4, [r0, r3]
+  adds r3, r3, #4
+ 800062a:	3304      	adds	r3, #4
+
+0800062c <LoopCopyDataInit>:
+
+LoopCopyDataInit:
+  adds r4, r0, r3
+ 800062c:	18c4      	adds	r4, r0, r3
+  cmp r4, r1
+ 800062e:	428c      	cmp	r4, r1
+  bcc CopyDataInit
+ 8000630:	d3f9      	bcc.n	8000626 <CopyDataInit>
+  
+/* Zero fill the bss segment. */
+  ldr r2, =_sbss
+ 8000632:	4a09      	ldr	r2, [pc, #36]	; (8000658 <LoopFillZerobss+0x1a>)
+  ldr r4, =_ebss
+ 8000634:	4c09      	ldr	r4, [pc, #36]	; (800065c <LoopFillZerobss+0x1e>)
+  movs r3, #0
+ 8000636:	2300      	movs	r3, #0
+  b LoopFillZerobss
+ 8000638:	e001      	b.n	800063e <LoopFillZerobss>
+
+0800063a <FillZerobss>:
+
+FillZerobss:
+  str  r3, [r2]
+ 800063a:	6013      	str	r3, [r2, #0]
+  adds r2, r2, #4
+ 800063c:	3204      	adds	r2, #4
+
+0800063e <LoopFillZerobss>:
+
+LoopFillZerobss:
+  cmp r2, r4
+ 800063e:	42a2      	cmp	r2, r4
+  bcc FillZerobss
+ 8000640:	d3fb      	bcc.n	800063a <FillZerobss>
+
+/* Call static constructors */
+    bl __libc_init_array
+ 8000642:	f000 f821 	bl	8000688 <__libc_init_array>
+/* Call the application's entry point.*/
+  bl main
+ 8000646:	f7ff ff83 	bl	8000550 <main>
+  bx lr
+ 800064a:	4770      	bx	lr
+  ldr r0, =_sdata
+ 800064c:	20000000 	.word	0x20000000
+  ldr r1, =_edata
+ 8000650:	20000038 	.word	0x20000038
+  ldr r2, =_sidata
+ 8000654:	080006f0 	.word	0x080006f0
+  ldr r2, =_sbss
+ 8000658:	20000038 	.word	0x20000038
+  ldr r4, =_ebss
+ 800065c:	20000098 	.word	0x20000098
+
+08000660 <ADC1_2_IRQHandler>:
+ * @retval : None
+*/
+    .section .text.Default_Handler,"ax",%progbits
+Default_Handler:
+Infinite_Loop:
+  b Infinite_Loop
+ 8000660:	e7fe      	b.n	8000660 <ADC1_2_IRQHandler>
+	...
+
+08000664 <HAL_IncTick>:
+  * @note This function is declared as __weak to be overwritten in case of other
+  *      implementations in user file.
+  * @retval None
+  */
+__weak void HAL_IncTick(void)
+{
+ 8000664:	b480      	push	{r7}
+ 8000666:	af00      	add	r7, sp, #0
+  uwTick += uwTickFreq;
+ 8000668:	4b05      	ldr	r3, [pc, #20]	; (8000680 <HAL_IncTick+0x1c>)
+ 800066a:	781b      	ldrb	r3, [r3, #0]
+ 800066c:	461a      	mov	r2, r3
+ 800066e:	4b05      	ldr	r3, [pc, #20]	; (8000684 <HAL_IncTick+0x20>)
+ 8000670:	681b      	ldr	r3, [r3, #0]
+ 8000672:	4413      	add	r3, r2
+ 8000674:	4a03      	ldr	r2, [pc, #12]	; (8000684 <HAL_IncTick+0x20>)
+ 8000676:	6013      	str	r3, [r2, #0]
+}
+ 8000678:	bf00      	nop
+ 800067a:	46bd      	mov	sp, r7
+ 800067c:	bc80      	pop	{r7}
+ 800067e:	4770      	bx	lr
+ 8000680:	20000036 	.word	0x20000036
+ 8000684:	20000094 	.word	0x20000094
+
+08000688 <__libc_init_array>:
+ 8000688:	b570      	push	{r4, r5, r6, lr}
+ 800068a:	2600      	movs	r6, #0
+ 800068c:	4d0c      	ldr	r5, [pc, #48]	; (80006c0 <__libc_init_array+0x38>)
+ 800068e:	4c0d      	ldr	r4, [pc, #52]	; (80006c4 <__libc_init_array+0x3c>)
+ 8000690:	1b64      	subs	r4, r4, r5
+ 8000692:	10a4      	asrs	r4, r4, #2
+ 8000694:	42a6      	cmp	r6, r4
+ 8000696:	d109      	bne.n	80006ac <__libc_init_array+0x24>
+ 8000698:	f000 f81a 	bl	80006d0 <_init>
+ 800069c:	2600      	movs	r6, #0
+ 800069e:	4d0a      	ldr	r5, [pc, #40]	; (80006c8 <__libc_init_array+0x40>)
+ 80006a0:	4c0a      	ldr	r4, [pc, #40]	; (80006cc <__libc_init_array+0x44>)
+ 80006a2:	1b64      	subs	r4, r4, r5
+ 80006a4:	10a4      	asrs	r4, r4, #2
+ 80006a6:	42a6      	cmp	r6, r4
+ 80006a8:	d105      	bne.n	80006b6 <__libc_init_array+0x2e>
+ 80006aa:	bd70      	pop	{r4, r5, r6, pc}
+ 80006ac:	f855 3b04 	ldr.w	r3, [r5], #4
+ 80006b0:	4798      	blx	r3
+ 80006b2:	3601      	adds	r6, #1
+ 80006b4:	e7ee      	b.n	8000694 <__libc_init_array+0xc>
+ 80006b6:	f855 3b04 	ldr.w	r3, [r5], #4
+ 80006ba:	4798      	blx	r3
+ 80006bc:	3601      	adds	r6, #1
+ 80006be:	e7f2      	b.n	80006a6 <__libc_init_array+0x1e>
+ 80006c0:	080006e8 	.word	0x080006e8
+ 80006c4:	080006e8 	.word	0x080006e8
+ 80006c8:	080006e8 	.word	0x080006e8
+ 80006cc:	080006ec 	.word	0x080006ec
+
+080006d0 <_init>:
+ 80006d0:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 80006d2:	bf00      	nop
+ 80006d4:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 80006d6:	bc08      	pop	{r3}
+ 80006d8:	469e      	mov	lr, r3
+ 80006da:	4770      	bx	lr
+
+080006dc <_fini>:
+ 80006dc:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 80006de:	bf00      	nop
+ 80006e0:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 80006e2:	bc08      	pop	{r3}
+ 80006e4:	469e      	mov	lr, r3
+ 80006e6:	4770      	bx	lr

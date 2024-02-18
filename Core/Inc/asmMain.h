@@ -1,0 +1,7 @@
+#ifndef APPLICATION_USER_CORE_ASM_MAIN_
+#define APPLICATION_USER_CORE_ASM_MAIN_
+
+extern void asmMain(void);
+
+
+#endif /* APPLICATION_USER_CORE_ASM_MAIN_ */
