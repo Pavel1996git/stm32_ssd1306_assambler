@@ -27,7 +27,7 @@ Two bitmaps are initialized in the `main.c` file: one with the "HELLO" inscripti
 The `asmInterruptWFI.s` file contains code for configuring the SSD1306 display. The interrupt handler for the EXT0 line is redefined and used to load a bitmap into the SSD1306 memory depending on the signal level at the B0 output.
 
 ## Schematic diagram
-![Scheme](diagrama.xcf)
+![Scheme](diagrama.png)
 
 ## Dependencies
 
