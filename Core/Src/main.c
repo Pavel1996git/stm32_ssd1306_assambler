@@ -43,18 +43,9 @@ extern uint8_t dataVOID[] = {
 int main(void)
 {
     asmClockEnable();      // Enable clock
-    // Включение макроса DWT_CYCCNT
-       CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-       DWT->CYCCNT = 0;
-       DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
-           // Запуск макроса DWT_CYCCNT
-           start_time = DWT->CYCCNT;
     asmI2cEnable();        // Enable I2C
     asmInterruptWFI();     // Enable Wait for Interrupt mode
 
-           // Остановка макроса DWT_CYCCNT
-              end_time = DWT->CYCCNT;
-              elapsed_time = end_time - start_time;
     asmMain();             // Call the main assembly function
 }
 
